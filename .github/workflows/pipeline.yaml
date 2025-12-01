@@ -39,14 +39,14 @@ jobs:
 
       - name: Build Application
         run: pnpm build
-      
+
       - name: Slack Notification
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          fields: repo,commit,author
+          text: 'slack slack slack'
           webhook_url: ${{ env.SLACK_WEBHOOK_URL }}
 
   pr-build:

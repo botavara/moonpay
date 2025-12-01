@@ -39,7 +39,7 @@ jobs:
 
       - name: Build Application
         run: pnpm build
-
+      
       - name: Slack Notification
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -97,8 +97,16 @@ jobs:
       - name: Generate Prisma Client
         run: pnpm prisma generate
 
-      - name: Run Prisma Migrations
-        run: pnpm prisma migrate deploy
+      - name: Setup Prisma Database
+        shell: bash
+        run: |
+          if [ -d "prisma/migrations" ] && [ "$(ls -A prisma/migrations)" ]; then
+            echo "Existing migrations, apply migrate deploy..."
+            pnpm prisma migrate deploy
+          else
+            echo "Non existing migrations, sync"
+            pnpm prisma db push
+          fi
 
       - name: Build Application
         run: pnpm build

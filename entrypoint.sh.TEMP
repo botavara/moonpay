@@ -1,0 +1,13 @@
+#!/bin/sh
+
+echo "Applying database migrations..."
+pnpm prisma migrate deploy
+
+if [ $? -ne 0 ]; then
+  echo "Migration failed!"
+  exit 1
+fi
+
+echo "Migrations applied successfully"
+echo "Start APP"
+exec "$@"

@@ -39,7 +39,7 @@ jobs:
 
       - name: Build Application
         run: pnpm build
-      
+
       - name: Slack Notification
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
@@ -47,7 +47,6 @@ jobs:
         with:
           status: ${{ job.status }}
           fields: repo,commit,author
-          webhook_url: ${{ env.SLACK_WEBHOOK_URL }}
 
   pr-build:
     if: github.event_name == 'pull_request'

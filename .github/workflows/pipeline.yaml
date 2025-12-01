@@ -46,8 +46,7 @@ jobs:
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          text: 'slack slack slack'
-          webhook_url: ${{ env.SLACK_WEBHOOK_URL }}
+          fields: repo,commit,author
 
   pr-build:
     if: github.event_name == 'pull_request'

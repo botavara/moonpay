@@ -1,56 +1,21 @@
-THIS IS OUR FIRST BUILD
-# Next.js Prisma Starter
+# MoonPay DevOps challenge
 
-This is a simple Next.js template that incorporates [Prisma](https://prisma.io/) as the Object-Relational Mapping (ORM) tool. The following instructions guide you on how to effectively use this template.
+Take-home exercise for a MoonPay interview (December 2025). The starting point was MoonPay's
+[Next.js + Prisma template](https://github.com/moonpay/devops-challenge); the task was to give it a CI pipeline.
 
-## Step-by-step Usage Guide
+Everything I added lives in [.github/workflows/pipeline.yaml](.github/workflows/pipeline.yaml):
 
-### Step 1: Clone and Install Dependencies
+- **Feature branches** (`feature/**`): install, lint, Prisma client generation and a production build on every push.
+- **Pull requests to `main`**: the same, plus a throwaway Postgres 17 container, `prisma migrate deploy` when
+  migrations exist (falling back to `db push`), and a smoke test that starts the built app and curls `/`.
+- **Slack notification** with the outcome of every run, through a webhook kept as a repository secret.
+- Database credentials come from repository secrets; nothing is hard-coded in the workflow.
 
-The first step is to clone this repository and install dependencies. This can be done in a couple ways:
-
-```bash
-pnpm create next-app --example https://github.com/moonpay/devops-challenge
-
-# or
-
-git clone https://github.com/moonpay/devops-challenge
-cd devops-challenge
-pnpm install
-```
-
-### Step 2: Set Up Environment Variables
-
-Once you've cloned the project, you need to configure the environment variables. Start by creating a `.env` file by copying the provided `.env.example` file in this directory. You can do this using the command:
+## Run locally
 
 ```bash
 cp .env.example .env
+docker compose up -d          # Postgres 17
+pnpm install && pnpm db:seed
+pnpm dev                      # http://localhost:3000
 ```
-
-Please note that the `.env` file is ignored by Git for security reasons.
-
-### Step 3: Start the Database and Seed Data
-
-Next, you need to start the database and seed the data. You can do this by running the following command:
-
-```bash
-docker run --rm --name postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=currencies -p 5432:5432 -d postgres:17-alpine
-
-pnpm db:seed
-
-# or
-
-docker compose up -d
-
-pnpm db:seed
-```
-
-### Step 4: Start Development Server
-
-Finally, you are ready to run the Next.js development server. Execute the following command in your terminal:
-
-```bash
-pnpm dev
-```
-
-Once this command runs successfully, the project is up and ready. You might be missing some components (like a Dockerfile), but you can add them as you go.
